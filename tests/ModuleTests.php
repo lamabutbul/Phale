@@ -1,7 +1,7 @@
 <?php
 
-use Punit\Tests;
-use Punit\Assert;
+use Phunit\Tests;
+use Phunit\Assert;
 use Phale\Module;
 use Phale\Factory;
 
