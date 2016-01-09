@@ -3,4 +3,4 @@
 require('../../vendor.php');
 require('ModuleTests.php');
 
-\Punit\Punit::run();
+\Phunit\Phunit::run();
