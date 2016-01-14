@@ -50,7 +50,11 @@ class Module {
     public function module($path, Module $module) {
         $this->modules[$path] = $module;
         $this->factories = array_merge($this->factories, $module->factories);
-        $this->endpoints = array_merge_recursive($this->endpoints, $module->endpoints);
+        foreach ($module->endpoints as $method => $endpoints) {
+            foreach ($endpoints as $endpointPath => $endpoint) {
+                $this->endpoints[$method][$path . $endpointPath] = $endpoint;
+            }
+        }
     }
 
     /**
