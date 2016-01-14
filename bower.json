@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "Phunit": "phunit#~0.1.0"
+    "Phunit": "phunit#~0.1.1",
+    "Dephendency": "dephendency#~0.1.1"
   }
 }
