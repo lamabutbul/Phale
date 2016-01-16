@@ -6,6 +6,18 @@ namespace Phale;
 class Request {
 
     /**
+     * @param array $server
+     * @return Request
+     */
+    static public function fromHttp(array $server) {
+        $protocol = $server['SERVER_PROTOCOL'];
+        $method = strtoupper($server['REQUEST_METHOD']);
+        $parts = explode('?', $server['REQUEST_URI']);
+        $path = $parts[0];
+        return new self($protocol, $method, $path);
+    }
+
+    /**
      * @var string
      */
     public $protocol;
@@ -22,20 +34,14 @@ class Request {
 
     /**
      * Request constructor.
+     * @param string $protocol
+     * @param string $method
+     * @param string $path
      */
-    public function __construct() {
-        $this->protocol = $_SERVER['SERVER_PROTOCOL'];
-        $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
-        $this->path = $this->getPath();
-    }
-
-    /**
-     * Get the path from string.
-     * @return string
-     */
-    private function getPath() {
-        $parts = explode('?', $_SERVER['REQUEST_URI']);
-        return $parts[0];
+    public function __construct($protocol, $method, $path) {
+        $this->protocol = $protocol;
+        $this->method = $method;
+        $this->path = $path;
     }
 
 }
