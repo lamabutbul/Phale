@@ -6,6 +6,13 @@ namespace Phale;
 class Response {
 
     /**
+     * @return Response
+     */
+    static public function fromHttp() {
+        return new self($_SERVER['SERVER_PROTOCOL']);
+    }
+
+    /**
      * @var string
      */
     public $protocol;
@@ -27,9 +34,10 @@ class Response {
 
     /**
      * Response constructor.
+     * @param string $protocol
      */
-    public function __construct() {
-        $this->protocol = $_SERVER['SERVER_PROTOCOL'];
+    public function __construct($protocol) {
+        $this->protocol = $protocol;
     }
 
     /**

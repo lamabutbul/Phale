@@ -21,8 +21,9 @@ class App extends Module {
     /**
      * Run the application.
      * @param Request $request
+     * @param Response $response
      */
-    public function run(Request $request) {
+    public function run(Request $request, Response $response) {
         $endpoint = null;
         $args = [];
         foreach ($this->endpoints[$request->method] as $path => $possible_endpoint) {
@@ -38,7 +39,6 @@ class App extends Module {
         }
         $dependencies = $this->getDependencies($endpoint->dependencies);
         if ($endpoint) {
-            $response = new Response();
             call_user_func_array($endpoint->handler, array_merge([$request, $response], $args, $dependencies));
         }
     }

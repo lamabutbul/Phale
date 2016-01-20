@@ -101,9 +101,10 @@ class AppTests extends Tests {
         $app = new App(self::VALID_APP_NAME);
         $app->get(self::VALID_ENDPOINT_PATH, $this->VALID_ENDPOINT_DEPENDENCIES, $this->VALID_ENDPOINT_HANDLER);
         $request = new Request('HTTP/1.1', 'GET', '/valid/endpoint');
+        $response = new Response('HTTP/1.1');
 
         // act
-        $app->run($request);
+        $app->run($request, $response);
 
         // assert
 
@@ -115,9 +116,10 @@ class AppTests extends Tests {
         $app->factory(self::VALID_DEPENDENCY_NAME, $this->VALID_DEPENDENCY_DEPENDENCIES, $this->VALID_DEPENDENCY_FACTORY);
         $app->get(self::VALID_ENDPOINT_PATH, $this->VALID_ENDPOINT_WITH_DEPENDENCIES_DEPENDENCIES, $this->VALID_ENDPOINT_WITH_DEPENDENCIES_HANDLER);
         $request = new Request('HTTP/1.1', 'GET', '/valid/endpoint');
+        $response = new Response('HTTP/1.1');
 
         // act
-        $app->run($request);
+        $app->run($request, $response);
 
         // assert
 
