@@ -18,6 +18,6 @@
   ],
   "dependencies": {
     "Phunit": "phunit#~0.1.1",
-    "Dephendency": "dephendency#~0.1.1"
+    "Dephendency": "dephendency#~0.1.2"
   }
 }

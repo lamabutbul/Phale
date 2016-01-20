@@ -6,6 +6,11 @@ namespace Phale;
 class App extends Module {
 
     /**
+     * @var array
+     */
+    public $dependencies = [];
+
+    /**
      * App constructor.
      * @param string $name
      */
@@ -18,7 +23,24 @@ class App extends Module {
      * @param Request $request
      */
     public function run(Request $request) {
-//        $handler = $this->getHandler();
+        $endpoint = null;
+        $args = [];
+        foreach ($this->endpoints[$request->method] as $path => $possible_endpoint) {
+            $regexp = $this->preparePathRegexp($path);
+            if (preg_match($regexp, $request->path, $results)) {
+                $endpoint = $possible_endpoint;
+                foreach ($results as $key => $result) {
+                    if (!is_int($key)) {
+                        $args[] = $result;
+                    }
+                }
+            }
+        }
+        $dependencies = $this->getDependencies($endpoint->dependencies);
+        if ($endpoint) {
+            $response = new Response();
+            call_user_func_array($endpoint->handler, array_merge([$request, $response], $args, $dependencies));
+        }
     }
 
     /**
@@ -34,6 +56,22 @@ class App extends Module {
             }
         }
         return sprintf('/^%s$/', implode("\\/", $parts));
+    }
+
+    /**
+     * @param string[] $names
+     * @return array
+     */
+    public function getDependencies(array $names) {
+        $dependencies = [];
+        foreach ($names as $name) {
+            if (!isset($this->dependencies[$name])) {
+                $factory = $this->factories[$name];
+                $this->dependencies[$name] = call_user_func_array($factory->factory, $this->getDependencies($factory->dependencies));
+            }
+            $dependencies[] = $this->dependencies[$name];
+        }
+        return $dependencies;
     }
 
 }

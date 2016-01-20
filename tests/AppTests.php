@@ -4,14 +4,29 @@ use Phunit\Tests;
 use Phunit\Assert;
 use Phale\Module;
 use Phale\App;
+use Phale\Request;
+use Phale\Response;
 
 
 class AppTests extends Tests {
 
     const VALID_APP_NAME = 'VALID_APP_NAME';
+    const VALID_ENDPOINT_PATH = '/valid/:endpoint';
+    public $VALID_ENDPOINT_DEPENDENCIES = [];
+    public $VALID_ENDPOINT_HANDLER = null;
+
+    public $VALID_ENDPOINT_WITH_DEPENDENCIES_DEPENDENCIES = ['VALID_DEPENDENCY_NAME'];
+    public $VALID_ENDPOINT_WITH_DEPENDENCIES_HANDLER = null;
+
+    const VALID_DEPENDENCY_NAME = 'VALID_DEPENDENCY_NAME';
+    public $VALID_DEPENDENCY_DEPENDENCIES = [];
+    public $VALID_DEPENDENCY_FACTORY = null;
+    const VALID_DEPENDENCY = 'VALID_DEPENDENCY';
 
     public function __construct() {
-
+        $this->VALID_ENDPOINT_HANDLER = function(Request $request, Response $response){};
+        $this->VALID_ENDPOINT_WITH_DEPENDENCIES_HANDLER = function(Request $request, Response $response, $dependency){};
+        $this->VALID_DEPENDENCY_FACTORY = function(){return self::VALID_DEPENDENCY;};
     }
 
     /**
@@ -79,6 +94,33 @@ class AppTests extends Tests {
 
         // assert
         Assert::areEqual($regexp, "/^\\/multi\\/path\\/(?P<arg>[^\\/]+)\\/path$/");
+    }
+
+    public function run_ValidPath_ReturnsResponse() {
+        // arrange
+        $app = new App(self::VALID_APP_NAME);
+        $app->get(self::VALID_ENDPOINT_PATH, $this->VALID_ENDPOINT_DEPENDENCIES, $this->VALID_ENDPOINT_HANDLER);
+        $request = new Request('HTTP/1.1', 'GET', '/valid/endpoint');
+
+        // act
+        $app->run($request);
+
+        // assert
+
+    }
+
+    public function run_ValidPathWithDependencies_ReturnsResponse() {
+        // arrange
+        $app = new App(self::VALID_APP_NAME);
+        $app->factory(self::VALID_DEPENDENCY_NAME, $this->VALID_DEPENDENCY_DEPENDENCIES, $this->VALID_DEPENDENCY_FACTORY);
+        $app->get(self::VALID_ENDPOINT_PATH, $this->VALID_ENDPOINT_WITH_DEPENDENCIES_DEPENDENCIES, $this->VALID_ENDPOINT_WITH_DEPENDENCIES_HANDLER);
+        $request = new Request('HTTP/1.1', 'GET', '/valid/endpoint');
+
+        // act
+        $app->run($request);
+
+        // assert
+
     }
 
 }
