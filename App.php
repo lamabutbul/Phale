@@ -6,6 +6,11 @@ namespace Phale;
 class App extends Module {
 
     /**
+     * @var string
+     */
+    public $basePath;
+
+    /**
      * @var array
      */
     public $dependencies = [];
@@ -13,9 +18,11 @@ class App extends Module {
     /**
      * App constructor.
      * @param string $name
+     * @param string $basePath
      */
-    public function __construct($name) {
+    public function __construct($name, $basePath = '') {
         parent::__construct($name);
+        $this->basePath = $basePath;
     }
 
     /**
@@ -24,6 +31,9 @@ class App extends Module {
      * @param Response $response
      */
     public function run(Request $request, Response $response) {
+        if ($this->basePath && strpos($request->path, $this->basePath) === 0) {
+            $request->path = substr($request->path, strlen($this->basePath));
+        }
         $endpoint = null;
         $args = [];
         foreach ($this->endpoints[$request->method] as $path => $possible_endpoint) {
